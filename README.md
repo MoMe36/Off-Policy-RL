@@ -13,4 +13,4 @@ Currently, only on `Pendulum-v0`. I plan on adding a more flexible version, more
 
 ### Some results: 
 
-[Reward on Pendulum](ddpg_pendulum.png)
+![Reward on Pendulum](ddpg_pendulum.png)
