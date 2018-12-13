@@ -1,2 +1,2 @@
-./runs
-./trained_models
+runs/
+trained_models/
