@@ -1,32 +1,40 @@
 DDPG(
-  (policy): Sequential(
-    (0): Linear(in_features=3, out_features=400, bias=True)
-    (1): ReLU()
-    (2): Linear(in_features=400, out_features=300, bias=True)
-    (3): ReLU()
-    (4): Linear(in_features=300, out_features=1, bias=True)
-    (5): Tanh()
+  (policy): Actor(
+    (policy): Sequential(
+      (0): Linear(in_features=3, out_features=400, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=400, out_features=300, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=300, out_features=1, bias=True)
+      (5): Tanh()
+    )
   )
-  (policy_targ): Sequential(
-    (0): Linear(in_features=3, out_features=400, bias=True)
-    (1): ReLU()
-    (2): Linear(in_features=400, out_features=300, bias=True)
-    (3): ReLU()
-    (4): Linear(in_features=300, out_features=1, bias=True)
-    (5): Tanh()
+  (policy_targ): Actor(
+    (policy): Sequential(
+      (0): Linear(in_features=3, out_features=400, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=400, out_features=300, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=300, out_features=1, bias=True)
+      (5): Tanh()
+    )
   )
-  (q): Sequential(
-    (0): Linear(in_features=4, out_features=400, bias=True)
-    (1): ReLU()
-    (2): Linear(in_features=400, out_features=300, bias=True)
-    (3): ReLU()
-    (4): Linear(in_features=300, out_features=1, bias=True)
+  (q): Critic(
+    (q): Sequential(
+      (0): Linear(in_features=4, out_features=400, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=400, out_features=300, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=300, out_features=1, bias=True)
+    )
   )
-  (q_targ): Sequential(
-    (0): Linear(in_features=4, out_features=400, bias=True)
-    (1): ReLU()
-    (2): Linear(in_features=400, out_features=300, bias=True)
-    (3): ReLU()
-    (4): Linear(in_features=300, out_features=1, bias=True)
+  (q_targ): Critic(
+    (q): Sequential(
+      (0): Linear(in_features=4, out_features=400, bias=True)
+      (1): ReLU()
+      (2): Linear(in_features=400, out_features=300, bias=True)
+      (3): ReLU()
+      (4): Linear(in_features=300, out_features=1, bias=True)
+    )
   )
 )

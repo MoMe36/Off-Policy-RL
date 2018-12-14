@@ -76,17 +76,40 @@ class ReplayBuffer:
 
 		return np.array(states), np.array(actions), np.array(rewards), np.array(next_states), np.array(dones)
 
+class Actor(nn.Module): 
+
+	def __init__(self, obs_shape, action_shape, max_ac): 
+	
+		super().__init__()
+		self.policy = nn.Sequential(nn.Linear(obs_shape,400), nn.ReLU(), nn.Linear(400,300), nn.ReLU(), nn.Linear(300,action_shape), nn.Tanh())
+		self.max_ac = torch.tensor(max_ac).float().reshape(1,-1)
+
+	def forward(self, x): 
+
+		return self.policy(x)*self.max_ac
+class Critic(nn.Module): 
+
+	def __init__(self, obs_shape, action_shape): 
+		
+		super().__init__()
+		self.q = nn.Sequential(nn.Linear(obs_shape + action_shape, 400), nn.ReLU(), nn.Linear(400,300), nn.ReLU(), nn.Linear(300,1)) 
+	def forward(self, s,a) :
+
+		x = torch.cat([s,a], 1)
+		return self.q(x)
+
 class DDPG(nn.Module): 
 
 	def __init__(self, obs_shape, action_shape, max_ac): 
 
 		super().__init__()
 		
-		self.policy = nn.Sequential(nn.Linear(obs_shape,400), nn.ReLU(), nn.Linear(400,300), nn.ReLU(), nn.Linear(300,action_shape), nn.Tanh())
-		self.policy_targ = nn.Sequential(nn.Linear(obs_shape,400), nn.ReLU(), nn.Linear(400,300), nn.ReLU(), nn.Linear(300,action_shape), nn.Tanh())
-		
-		self.q = nn.Sequential(nn.Linear(obs_shape + action_shape, 400), nn.ReLU(), nn.Linear(400,300), nn.ReLU(), nn.Linear(300,1)) 
-		self.q_targ = nn.Sequential(nn.Linear(obs_shape + action_shape, 400), nn.ReLU(), nn.Linear(400,300), nn.ReLU(), nn.Linear(300,1)) 
+		self.policy = Actor(obs_shape, action_shape, max_ac) 
+		self.policy_targ = Actor(obs_shape, action_shape, max_ac)
+
+		self.q = Critic(obs_shape, action_shape) 
+		self.q_targ = Critic(obs_shape, action_shape) 
+
 
 		self.policy_targ.load_state_dict(self.policy.state_dict())
 		self.q_targ.load_state_dict(self.q.state_dict())
@@ -94,23 +117,19 @@ class DDPG(nn.Module):
 		self.adam_policy = optim.Adam(self.policy.parameters(),lr =  1e-4)
 		self.adam_q = optim.Adam(self.q.parameters(), lr = 1e-2)
 
-		self.max_ac = torch.tensor(max_ac).float().reshape(1,-1)
-	def forward(self, x): 
-		
-		pass 
-	
 	def select_action(self, x): 
 	
 		batch_size = x.shape[0]
-		return self.policy(x).reshape(batch_size,-1)*self.max_ac
+		action = self.policy(x).reshape(batch_size, -1)
+		return action 
 	
 	def evaluate(self, x, actions): 
 		
-		return self.q(torch.cat([x, actions], 1))
+		return self.q(x, actions)
 
 	def target_eval(self, x, actions):
 
-		return self.q_targ(torch.cat([x, actions], 1))
+		return self.q_targ(x, actions)
 
 	def train(self, memory, iterations = 200): 
 
