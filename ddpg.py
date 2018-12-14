@@ -47,7 +47,7 @@ class ReplayBuffer:
 	def __init__(self, size = 1e6): 
 		
 		self.storage = []
-		self.max_size = size 
+		self.max_size = int(size) 
 		self.current = 0 
 	
 	def add(self, xp):
@@ -234,7 +234,8 @@ for ep in range(max_episodes):
 			
 		if ep % 10 == 0 and ep > 0: 
 			env.render() 
-			time.sleep(0.02)
+			if args.env_name == "Pendulum-v0":
+				time.sleep(0.02)
 
 		ns, r, done, infos = env.step(action)
 		xp = (s, action, r, ns, 0. if done else 1.)
